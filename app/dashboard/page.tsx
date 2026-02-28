@@ -1,12 +1,15 @@
 "use client";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/app/components/NavBar";
+import FilterBar, { FilterState } from "@/app/components/FilterBar";
+import PaymentTable from "../components/PaymentTable";
 
 const DashboardPage: FC = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [filters, setFilters] = useState<FilterState | null>(null);
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login");
@@ -19,8 +22,11 @@ const DashboardPage: FC = () => {
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg-primary)" }}>
       <Navbar />
+      <FilterBar onFilterChange={(f) => setFilters(f)} />
       <main className="p-8">
-        <pre className="json-box">{JSON.stringify(session, null, 2)}</pre>
+        {/* Table will go here */}
+        <PaymentTable />
+        <pre className="text-xs">{JSON.stringify(filters, null, 2)}</pre>
       </main>
     </div>
   );
