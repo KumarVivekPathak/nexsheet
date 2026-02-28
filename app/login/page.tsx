@@ -1,15 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useState, FC } from "react";
 import { signIn } from "next-auth/react";
-import { Poppins } from "next/font/google";
 
-const poppins = Poppins({
-    subsets: ["latin"],
-    weight: ["300", "400", "500", "600", "700", "800"],
-    variable: "--font-poppins",
-});
-
-export default function LoginPage() {
+const LoginPage: FC = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
@@ -21,13 +14,7 @@ export default function LoginPage() {
         e.preventDefault();
         setLoading(true);
         setError("");
-
-        const res = await signIn("credentials", {
-            email,
-            password,
-            redirect: false,
-        });
-
+        const res = await signIn("credentials", { email, password, redirect: false });
         if (res?.error) {
             setError("Invalid email or password");
             setLoading(false);
@@ -36,209 +23,88 @@ export default function LoginPage() {
         }
     };
 
-    const handleGoogle = async () => {
-        setGoogleLoading(true);
-        await signIn("google", { callbackUrl: "/dashboard" });
-    };
-
     return (
-        <div className={`${poppins.variable} min-h-screen flex items-center justify-center relative overflow-hidden`}
-            style={{ fontFamily: "var(--font-poppins)" }}>
+        <div className="bg-app flex items-center justify-center relative overflow-hidden">
 
-            {/* Background */}
-            <div className="absolute inset-0" style={{
-                background: "linear-gradient(135deg, #0a0e1a 0%, #0d1b2e 30%, #1a1200 60%, #0a0e1a 100%)"
-            }} />
+            {/* Pattern */}
+            <div className="absolute inset-0 bg-pattern" />
 
-            {/* Geometric pattern overlay */}
-            <div className="absolute inset-0 opacity-10" style={{
-                backgroundImage: `
-          repeating-linear-gradient(
-            45deg,
-            transparent,
-            transparent 40px,
-            rgba(212, 175, 55, 0.3) 40px,
-            rgba(212, 175, 55, 0.3) 41px
-          ),
-          repeating-linear-gradient(
-            -45deg,
-            transparent,
-            transparent 40px,
-            rgba(212, 175, 55, 0.15) 40px,
-            rgba(212, 175, 55, 0.15) 41px
-          )
-        `
-            }} />
-
-            {/* Glowing orbs */}
-            <div className="absolute top-[-100px] left-[-100px] w-[500px] h-[500px] rounded-full opacity-20" style={{
-                background: "radial-gradient(circle, #d4af37 0%, transparent 70%)",
-                filter: "blur(40px)"
-            }} />
-            <div className="absolute bottom-[-100px] right-[-100px] w-[400px] h-[400px] rounded-full opacity-15" style={{
-                background: "radial-gradient(circle, #1a3a6e 0%, transparent 70%)",
-                filter: "blur(60px)"
-            }} />
+            {/* Orbs */}
+            <div className="absolute top-[-100px] left-[-100px] w-[500px] h-[500px] rounded-full opacity-20"
+                style={{ background: "radial-gradient(circle, #d4af37 0%, transparent 70%)", filter: "blur(40px)" }} />
+            <div className="absolute bottom-[-100px] right-[-100px] w-[400px] h-[400px] rounded-full opacity-15"
+                style={{ background: "radial-gradient(circle, #1a3a6e 0%, transparent 70%)", filter: "blur(60px)" }} />
 
             {/* Card */}
             <div className="relative z-10 w-full max-w-md mx-4">
+                <div className="gold-accent-bar rounded-t-2xl" />
+                <div className="card rounded-t-none p-8">
 
-                {/* Top accent bar */}
-                <div className="h-1 w-full rounded-t-2xl" style={{
-                    background: "linear-gradient(90deg, #d4af37, #f5e17a, #d4af37)"
-                }} />
-
-                <div className="rounded-b-2xl p-8 relative" style={{
-                    background: "rgba(10, 14, 26, 0.85)",
-                    backdropFilter: "blur(20px)",
-                    border: "1px solid rgba(212, 175, 55, 0.2)",
-                    borderTop: "none",
-                    boxShadow: "0 25px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(212,175,55,0.05) inset"
-                }}>
-
-                    {/* Logo + Title */}
+                    {/* Logo */}
                     <div className="flex flex-col items-center mb-8">
-                        <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 relative" style={{
-                            background: "linear-gradient(135deg, #d4af37, #f5e17a)",
-                            boxShadow: "0 8px 24px rgba(212, 175, 55, 0.4)"
-                        }}>
-                            <span className="text-2xl font-bold text-gray-900">BN</span>
-                            {/* Star shape overlay */}
-                            <div className="absolute inset-0 rounded-2xl opacity-30" style={{
-                                background: "linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.4) 50%, transparent 70%)"
-                            }} />
+                        <div className="logo-badge-lg mb-4">
+                            <span>BN</span>
                         </div>
-
-                        <h1 className="text-3xl font-bold tracking-tight" style={{
-                            background: "linear-gradient(135deg, #ffffff 0%, #d4af37 100%)",
-                            WebkitBackgroundClip: "text",
-                            WebkitTextFillColor: "transparent",
-                        }}>
+                        <h1 className="text-3xl font-bold tracking-tight text-gold-gradient">
                             Welcome to NexSheet
                         </h1>
-                        <p className="text-sm mt-1" style={{ color: "rgba(212, 175, 55, 0.6)" }}>
+                        <p className="text-sm mt-1" style={{ color: "var(--gold-muted)" }}>
                             The Batra Numerology
                         </p>
                     </div>
 
-                    {/* Error */}
-                    {error && (
-                        <div className="mb-4 px-4 py-3 rounded-lg text-sm" style={{
-                            background: "rgba(220, 38, 38, 0.1)",
-                            border: "1px solid rgba(220, 38, 38, 0.3)",
-                            color: "#fca5a5"
-                        }}>
-                            {error}
-                        </div>
-                    )}
+                    {error && <div className="error-box">{error}</div>}
 
                     {/* Form */}
                     <form onSubmit={handleLogin} className="space-y-4">
-
-                        {/* Email */}
                         <div>
-                            <label className="block text-xs font-medium mb-1.5 tracking-wider uppercase" style={{ color: "rgba(212, 175, 55, 0.7)" }}>
-                                Email Address
-                            </label>
-                            <div className="relative">
-                                <input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="you@thebatraanumerology.com"
-                                    required
-                                    className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all duration-200"
-                                    style={{
-                                        background: "rgba(255,255,255,0.05)",
-                                        border: "1px solid rgba(212, 175, 55, 0.2)",
-                                        color: "#ffffff",
-                                        caretColor: "#d4af37",
-                                    }}
-                                    onFocus={(e) => e.target.style.border = "1px solid rgba(212, 175, 55, 0.6)"}
-                                    onBlur={(e) => e.target.style.border = "1px solid rgba(212, 175, 55, 0.2)"}
-                                />
-                            </div>
+                            <label className="label-gold">Email Address</label>
+                            <input
+                                type="email"
+                                className="input-gold"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="you@thebatraanumerology.com"
+                                required
+                            />
                         </div>
 
-                        {/* Password */}
                         <div>
-                            <label className="block text-xs font-medium mb-1.5 tracking-wider uppercase" style={{ color: "rgba(212, 175, 55, 0.7)" }}>
-                                Password
-                            </label>
+                            <label className="label-gold">Password</label>
                             <div className="relative">
                                 <input
                                     type={showPassword ? "text" : "password"}
+                                    className="input-gold pr-16"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     placeholder="Enter your password"
                                     required
-                                    className="w-full px-4 py-3 pr-12 rounded-xl text-sm outline-none transition-all duration-200"
-                                    style={{
-                                        background: "rgba(255,255,255,0.05)",
-                                        border: "1px solid rgba(212, 175, 55, 0.2)",
-                                        color: "#ffffff",
-                                        caretColor: "#d4af37",
-                                    }}
-                                    onFocus={(e) => e.target.style.border = "1px solid rgba(212, 175, 55, 0.6)"}
-                                    onBlur={(e) => e.target.style.border = "1px solid rgba(212, 175, 55, 0.2)"}
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
                                     className="absolute right-3 top-1/2 -translate-y-1/2 text-xs"
-                                    style={{ color: "rgba(212, 175, 55, 0.5)" }}
+                                    style={{ color: "var(--gold-muted)" }}
                                 >
                                     {showPassword ? "HIDE" : "SHOW"}
                                 </button>
                             </div>
                         </div>
 
-                        {/* Login Button */}
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full py-3 rounded-xl font-semibold text-sm tracking-wide transition-all duration-200 mt-2"
-                            style={{
-                                background: loading
-                                    ? "rgba(212, 175, 55, 0.4)"
-                                    : "linear-gradient(135deg, #d4af37, #f5e17a)",
-                                color: "#0a0e1a",
-                                boxShadow: loading ? "none" : "0 4px 20px rgba(212, 175, 55, 0.35)",
-                                cursor: loading ? "not-allowed" : "pointer"
-                            }}
-                        >
+                        <button type="submit" className="btn-gold" disabled={loading}>
                             {loading ? "Signing in..." : "Sign In"}
                         </button>
                     </form>
 
                     {/* Divider */}
                     <div className="flex items-center gap-3 my-5">
-                        <div className="flex-1 h-px" style={{ background: "rgba(212, 175, 55, 0.15)" }} />
-                        <span className="text-xs" style={{ color: "rgba(255,255,255,0.3)" }}>or</span>
-                        <div className="flex-1 h-px" style={{ background: "rgba(212, 175, 55, 0.15)" }} />
+                        <div className="flex-1 divider" />
+                        <span className="text-xs" style={{ color: "var(--white-muted)" }}>or</span>
+                        <div className="flex-1 divider" />
                     </div>
 
-                    {/* Google Button */}
-                    <button
-                        onClick={handleGoogle}
-                        disabled={googleLoading}
-                        className="w-full py-3 rounded-xl font-medium text-sm flex items-center justify-center gap-3 transition-all duration-200"
-                        style={{
-                            background: "rgba(255,255,255,0.05)",
-                            border: "1px solid rgba(255,255,255,0.12)",
-                            color: "#ffffff",
-                            cursor: googleLoading ? "not-allowed" : "pointer"
-                        }}
-                        onMouseEnter={(e) => {
-                            (e.target as HTMLButtonElement).style.background = "rgba(255,255,255,0.1)";
-                            (e.target as HTMLButtonElement).style.border = "1px solid rgba(255,255,255,0.25)";
-                        }}
-                        onMouseLeave={(e) => {
-                            (e.target as HTMLButtonElement).style.background = "rgba(255,255,255,0.05)";
-                            (e.target as HTMLButtonElement).style.border = "1px solid rgba(255,255,255,0.12)";
-                        }}
-                    >
-                        {/* Google Icon */}
+                    {/* Google */}
+                    <button className="btn-outline" onClick={() => { setGoogleLoading(true); signIn("google", { callbackUrl: "/dashboard" }); }} disabled={googleLoading}>
                         <svg width="18" height="18" viewBox="0 0 24 24">
                             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
                             <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
@@ -248,22 +114,13 @@ export default function LoginPage() {
                         {googleLoading ? "Redirecting..." : "Continue with Google"}
                     </button>
 
-                    {/* Footer */}
-                    <p className="text-center text-xs mt-6" style={{ color: "rgba(255,255,255,0.2)" }}>
+                    <p className="text-center text-xs mt-6" style={{ color: "var(--white-muted)" }}>
                         Only @thebatraanumerology.com accounts are allowed
                     </p>
-
                 </div>
             </div>
-
-            <style jsx global>{`
-        input::placeholder {
-          color: rgba(255, 255, 255, 0.2) !important;
-        }
-        * {
-          box-sizing: border-box;
-        }
-      `}</style>
         </div>
     );
-}
+};
+
+export default LoginPage;

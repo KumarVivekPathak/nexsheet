@@ -1,5 +1,4 @@
 "use client";
-
 import { FC, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -10,42 +9,18 @@ const DashboardPage: FC = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
-    }
+    if (status === "unauthenticated") router.push("/login");
   }, [status, router]);
 
   if (status === "loading") {
-    return (
-      <div style={{
-        minHeight: "100vh",
-        background: "#0a0e1a",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        color: "#d4af37",
-        fontFamily: "monospace"
-      }}>
-        Loading...
-      </div>
-    );
+    return <div className="loading-screen">Loading...</div>;
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0a0e1a" }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg-primary)" }}>
       <Navbar />
-      <main style={{ padding: "2rem", fontFamily: "monospace" }}>
-        <pre style={{
-          background: "rgba(212,175,55,0.05)",
-          border: "1px solid rgba(212,175,55,0.2)",
-          borderRadius: "12px",
-          padding: "1.5rem",
-          color: "#ffffff",
-          fontSize: "0.85rem",
-          overflow: "auto"
-        }}>
-          {JSON.stringify(session, null, 2)}
-        </pre>
+      <main className="p-8">
+        <pre className="json-box">{JSON.stringify(session, null, 2)}</pre>
       </main>
     </div>
   );
