@@ -1,31 +1,244 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
-  output   = "../app/generated/prisma"
+  provider        = "prisma-client"
+  output          = "../app/generated/prisma"
 }
 
 datasource db {
   provider = "mysql"
 }
 
-enum Role {
-  USER
-  MANAGER
-  ADMIN
+model course_table {
+  id          Int    @id @default(autoincrement())
+  course_name String @unique(map: "course_name") @db.VarChar(255)
+  course_type String @db.VarChar(100)
+
+  @@index([course_name], map: "idx_course_name")
 }
 
-model User {
-  employeeId   String @id 
-  emailId      String @unique
-  password     String
-  role         Role   @default(USER)
-  createdAt    DateTime @default(now())
+model customer_table {
+  id             Int       @id @default(autoincrement()) @db.UnsignedInt
+  customer_id    String    @unique(map: "customer_id") @db.VarChar(25)
+  name           String?   @db.VarChar(255)
+  email          String?   @db.VarChar(255)
+  phone          String?   @db.VarChar(20)
+  alternet_phone String?   @db.VarChar(20)
+  rm_name        Int?
+  created_at     DateTime? @default(now()) @db.DateTime(0)
 }
 
+model payment_table {
+  id                Int       @id @default(autoincrement()) @db.UnsignedInt
+  order_id          String    @unique(map: "uniq_order") @db.VarChar(100)
+  created_at        DateTime? @db.DateTime(0)
+  customer_id       String?   @db.VarChar(25)
+  name              String?   @db.VarChar(255)
+  email             String?   @db.VarChar(255)
+  course_type       String?   @db.VarChar(100)
+  course_name       String?   @db.VarChar(255)
+  amount            Decimal?  @db.Decimal(12, 2)
+  contact           String?   @db.VarChar(20)
+  emailid           String?   @db.VarChar(255)
+  phone             String?   @db.VarChar(20)
+  offer             String?   @db.VarChar(255)
+  assignee_email    String?   @db.VarChar(100)
+  assigned_rm       String?   @db.VarChar(100)
+  manager           String?   @db.VarChar(100)
+  city              String?   @db.VarChar(255)
+  pain_area         String?   @db.VarChar(255)
+  salary            String?   @db.VarChar(255)
+  dob               String?   @db.VarChar(50)
+  payment_id        String?   @db.VarChar(100)
+  status            String?   @db.VarChar(50)
+  currency          String?   @db.VarChar(10)
+  auth_code         String?   @db.VarChar(50)
+  international     Int?
+  method            String?   @db.VarChar(50)
+  amount_refunded   Int?
+  refund_status     String?   @db.VarChar(10)
+  vpa               String?   @db.VarChar(255)
+  fee               Int?
+  tax               Int?
+  payments_rrn      String?   @db.VarChar(100)
+  payments_arn      String?   @db.VarChar(100)
+  flow              String?   @db.VarChar(50)
+  error_code        String?   @db.VarChar(255)
+  error_discreption String?   @db.VarChar(255)
+  bank              String?   @db.VarChar(10)
+  card_id           String?   @db.VarChar(100)
+  card_type         String?   @db.VarChar(10)
+  card_network      String?   @db.VarChar(10)
+  wallet            String?   @db.VarChar(10)
+  source_channel    String?   @db.VarChar(10)
+  discreption       String?   @db.VarChar(10)
+  inserted_at       DateTime? @default(now()) @db.DateTime(0)
 
+  @@index([email], map: "idx_email")
+  @@index([phone], map: "idx_phone")
+}
 
+model payments {
+  id                  Int       @id @default(autoincrement()) @db.UnsignedInt
+  razorpay_payment_id String?   @db.VarChar(100)
+  order_id            String?   @db.VarChar(100)
+  created_at          DateTime? @db.DateTime(0)
+  status              String?   @db.VarChar(50)
+  amount              Decimal?  @db.Decimal(12, 2)
+  email               String?   @db.VarChar(255)
+  contact             String?   @db.VarChar(20)
+  notes_name          String?   @db.VarChar(255)
+  notes_email         String?   @db.VarChar(255)
+  notes_phone         String?   @db.VarChar(20)
+  notes_report_name   String?   @db.VarChar(255)
+  notes_course_name   String?   @db.VarChar(255)
+  notes_offer         String?   @db.VarChar(255)
+  notes_dob           String?   @db.VarChar(50)
+  inserted_at         DateTime? @default(dbgenerated("(curdate())")) @db.Date
+  source              String?   @db.VarChar(100)
+
+  @@index([order_id], map: "idx_order_id")
+  @@index([razorpay_payment_id], map: "idx_razorpay_id")
+  @@index([status], map: "idx_status")
+}
+
+model rm_table {
+  id           Int    @id @default(autoincrement())
+  emp_id       String @db.VarChar(20)
+  rm_name      String @db.VarChar(100)
+  manager_name String @db.VarChar(100)
+}
+
+model telecrm_leads {
+  id                          Int       @id @default(autoincrement())
+  leadid                      String?   @unique(map: "leadid") @db.VarChar(50)
+  created_on                  DateTime? @db.DateTime(0)
+  updated_on                  DateTime? @db.DateTime(0)
+  is_deleted                  Boolean?  @default(false)
+  date_creation_date          DateTime? @db.Date
+  money_offered_price         Decimal?  @db.Decimal(12, 2)
+  tags_course_name_1_1        String?   @db.Text
+  date_dob                    DateTime? @db.Date
+  dropdown_payment_status     String?   @db.VarChar(50)
+  money_payment_received      Decimal?  @db.Decimal(12, 2)
+  date_payment_date           DateTime? @db.Date
+  dropdown_assigned_rm_name   String?   @db.VarChar(100)
+  money_payment_remaining     Decimal?  @db.Decimal(12, 2)
+  text_state                  String?   @db.VarChar(100)
+  dropdown_backup_rm_name     String?   @db.VarChar(100)
+  dropdown_offer_code         String?   @db.VarChar(100)
+  money_next_installment_date DateTime? @db.Date
+  text_pain_area              String?   @db.VarChar(255)
+  text_course_name_1          String?   @db.VarChar(255)
+  phone_alternate_phone       String?   @db.VarChar(20)
+  email_email                 String?   @db.VarChar(255)
+  text_name                   String?   @db.VarChar(255)
+  phone_phone                 String?   @db.VarChar(20)
+  assignee                    String?   @db.VarChar(255)
+  lead_id                     String?   @db.VarChar(50)
+  lost_reason                 String?   @db.Text
+  created_at                  DateTime? @default(now()) @db.Timestamp(0)
+  updated_at_auto             DateTime? @default(now()) @db.Timestamp(0)
+
+  @@index([created_on], map: "idx_created_on")
+  @@index([email_email], map: "idx_email")
+  @@index([leadid], map: "idx_leadid")
+  @@index([phone_phone], map: "idx_phone")
+}
+
+model temp_payment_table {
+  id                Int       @id @default(autoincrement()) @db.UnsignedInt
+  order_id          String    @unique(map: "uniq_order") @db.VarChar(100)
+  created_at        DateTime? @db.DateTime(0)
+  customer_id       String?   @db.VarChar(25)
+  name              String?   @db.VarChar(255)
+  email             String?   @db.VarChar(255)
+  course_type       String?   @db.VarChar(100)
+  course_name       String?   @db.VarChar(255)
+  amount            Decimal?  @db.Decimal(12, 2)
+  contact           String?   @db.VarChar(20)
+  emailid           String?   @db.VarChar(255)
+  phone             String?   @db.VarChar(20)
+  offer             String?   @db.VarChar(255)
+  assignee_email    String?   @db.VarChar(100)
+  assigned_rm       String?   @db.VarChar(100)
+  manager           String?   @db.VarChar(100)
+  city              String?   @db.VarChar(255)
+  pain_area         String?   @db.VarChar(255)
+  salary            String?   @db.VarChar(255)
+  dob               String?   @db.VarChar(50)
+  payment_id        String?   @db.VarChar(100)
+  status            String?   @db.VarChar(50)
+  currency          String?   @db.VarChar(10)
+  auth_code         String?   @db.VarChar(50)
+  international     Int?
+  method            String?   @db.VarChar(50)
+  amount_refunded   Int?
+  refund_status     String?   @db.VarChar(10)
+  vpa               String?   @db.VarChar(255)
+  fee               Int?
+  tax               Int?
+  payments_rrn      String?   @db.VarChar(100)
+  payments_arn      String?   @db.VarChar(100)
+  flow              String?   @db.VarChar(50)
+  error_code        String?   @db.VarChar(255)
+  error_discreption String?   @db.VarChar(255)
+  bank              String?   @db.VarChar(10)
+  card_id           String?   @db.VarChar(100)
+  card_type         String?   @db.VarChar(10)
+  card_network      String?   @db.VarChar(10)
+  wallet            String?   @db.VarChar(10)
+  source_channel    String?   @db.VarChar(10)
+  discreption       String?   @db.VarChar(10)
+  inserted_at       DateTime? @default(now()) @db.DateTime(0)
+
+  @@index([email], map: "idx_email")
+  @@index([phone], map: "idx_phone")
+}
+
+model tmlabs_course_access {
+  id                         String    @id @db.VarChar(50)
+  name                       String?   @db.VarChar(150)
+  email                      String?   @db.VarChar(150)
+  phone                      BigInt?
+  orderTime                  DateTime? @db.DateTime(0)
+  orderId                    String?   @db.VarChar(50)
+  amount                     Decimal?  @default(0.00) @db.Decimal(15, 2)
+  gst                        Decimal?  @default(0.00) @db.Decimal(15, 2)
+  discount                   Decimal?  @default(0.00) @db.Decimal(15, 2)
+  coupon                     String?   @db.VarChar(100)
+  country                    String?   @db.VarChar(10)
+  amountPayable              Decimal?  @default(0.00) @db.Decimal(15, 2)
+  mangoId                    String?   @db.VarChar(50)
+  mangoName                  String?   @db.VarChar(255)
+  status                     String?   @db.VarChar(50)
+  dialCode                   String?   @db.VarChar(10)
+  subscriberId               String?   @db.VarChar(50)
+  recurringType              String?   @db.VarChar(50)
+  currency                   String?   @db.VarChar(10)
+  quantity                   Int?      @default(1)
+  renewalCount               Int?      @default(0)
+  subscriptionExpiryDate     DateTime? @db.DateTime(0)
+  subscriptionValidityInDays Int?
+  created_at                 DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model wati_broadcasts {
+  id            Int       @id @default(autoincrement())
+  ScheduleAt    DateTime  @db.DateTime(0)
+  PhoneNumber   BigInt
+  CampaignName  String    @db.VarChar(50)
+  TemplateName  String    @db.VarChar(50)
+  Status        String    @db.VarChar(20)
+  FailureReason String?   @db.VarChar(255)
+  QuickReplies  Boolean?  @default(false)
+  Clicked       Boolean?  @default(false)
+  Clicked1      String?   @db.VarChar(50)
+  Clicked2      String?   @db.VarChar(50)
+  Retried       Boolean?  @default(false)
+  CreatedAt     DateTime? @default(now()) @db.Timestamp(0)
+  source        String?   @db.VarChar(25)
+
+  @@index([CampaignName], map: "idx_campaign")
+  @@index([PhoneNumber], map: "idx_phone")
+  @@index([ScheduleAt], map: "idx_schedule")
+  @@index([Status], map: "idx_status")
+}
