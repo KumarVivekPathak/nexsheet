@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { config } from "../config";
+import LoginButton from "./components/LoginButton";
 
 export default async function Home() {
 
@@ -14,6 +15,7 @@ export default async function Home() {
         <div>Sign Up</div>
         <div>Sign In</div>
         <div>Welcome to nexsheet</div>
+        <LoginButton />
       </main>
     </div>
   );
