@@ -1,56 +1,85 @@
 import { prisma } from "@/prisma/prisma";
+import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 
-export const POST = async (req: Request) => {
+export async function POST(req: Request) {
     try {
         const { email, password } = await req.json();
 
-        // Validations
+        // 1️⃣ Validation
         if (!email || !password) {
-            return Response.json({ error: "Email and password are required" }, { status: 400 });
+            return NextResponse.json(
+                { success: false, message: "Email and password are required" },
+                { status: 400 }
+            );
         }
 
         if (!email.endsWith("@thebatraanumerology.com")) {
-            return Response.json({ error: "Email must be from @thebatraanumerology.com domain" }, { status: 400 });
+            return NextResponse.json(
+                { success: false, message: "Invalid email domain" },
+                { status: 400 }
+            );
         }
 
-        // Find user
+        // 2️⃣ Find user
         const user = await prisma.user.findUnique({
-            where: { email }
+            where: { empEmail: email }
         });
 
         if (!user) {
-            return Response.json({ error: "Invalid email or password" }, { status: 401 });
+            return NextResponse.json(
+                { success: false, message: "Invalid email or password" },
+                { status: 401 }
+            );
         }
 
-        // Plain text password check
+        // 3️⃣ Plain text password check
         if (user.password !== password) {
-            return Response.json({ error: "Invalid email or password" }, { status: 401 });
+            return NextResponse.json(
+                { success: false, message: "Invalid email or password" },
+                { status: 401 }
+            );
         }
 
-        // Generate JWT
+        // 4️⃣ Check JWT Secret
+        if (!process.env.JWT_SECRET) {
+            throw new Error("JWT_SECRET not defined");
+        }
+
+        // 5️⃣ Generate JWT
         const token = jwt.sign(
             {
                 id: user.id,
                 employeeId: user.employeeId,
-                email: user.email,
+                email: user.empEmail,
+                empName: user.empName,
                 role: user.role,
                 managerName: user.managerName,
+                managerEmail: user.managerEmail,
             },
-            process.env.JWT_SECRET!,
+            process.env.JWT_SECRET,
             { expiresIn: "7d" }
         );
 
+        // 6️⃣ Remove password before sending
         const { password: _, ...userWithoutPassword } = user;
 
-        return Response.json({
-            message: "Login successful",
-            token,
-            user: userWithoutPassword
-        }, { status: 200 });
+        return NextResponse.json(
+            {
+                success: true,
+                message: "Login successful",
+                token,
+                user: userWithoutPassword,
+            },
+            { status: 200 }
+        );
 
     } catch (error) {
-        console.error(error);
-        return Response.json({ error: "Internal server error" }, { status: 500 });
+        console.error("LOGIN ERROR:", error);
+
+        return NextResponse.json(
+            { success: false, message: "Internal server error" },
+            { status: 500 }
+        );
     }
 }
