@@ -42,9 +42,6 @@ export const POST = async (req: Request) => {
             );
         }
 
-        // 🔥 hash password (you forgot this)
-        const hashedPassword = await bcrypt.hash(password, 10);
-
         // Check existing user
         const existingUser = await prisma.user.findFirst({
             where: {
@@ -78,7 +75,7 @@ export const POST = async (req: Request) => {
                 employeeId: employee_id,
                 empName: emp_name,
                 empEmail: emp_email,
-                password: hashedPassword,
+                password: password,
                 role,
                 managerName: manager_name || null,
                 managerEmail: manager_email || null,
