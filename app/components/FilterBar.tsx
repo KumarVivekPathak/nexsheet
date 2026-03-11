@@ -1,6 +1,9 @@
 "use client";
 import { useState } from "react";
 import { Search, X } from "lucide-react";
+import { DatePickerWithRange } from "./DateRangePicker";
+import { FilterState, FilterBarProps } from "@/types/types";
+
 
 const RM_NAMES = [
     "Rahul Sharma",
@@ -14,18 +17,6 @@ const MANAGER_NAMES = ["Rajesh Verma", "Sunita Mehta", "Arun Joshi"];
 const COURSE_TYPES = ["Online", "Offline", "Hybrid", "Self-Paced"];
 
 
-export type FilterState = {
-    search: string;
-    searchType: "order_id" | "email" | "name" | "phone";
-    rm_name: string;
-    manager: string;
-    course_type: string;
-
-};
-
-type FilterBarProps = {
-    onFilterChange: (filters: FilterState) => void;
-};
 
 export default function FilterBar({ onFilterChange }: FilterBarProps) {
     const [filters, setFilters] = useState<FilterState>({
@@ -145,6 +136,18 @@ export default function FilterBar({ onFilterChange }: FilterBarProps) {
                 options={COURSE_TYPES}
                 onChange={(val) => handleChange("course_type", val)}
             />
+
+            <div className="min-w-[210px]">
+                <DatePickerWithRange
+                    onChange={(range) =>
+                        onFilterChange({
+                            ...filters,
+                            date_from: range?.from,
+                            date_to: range?.to,
+                        })
+                    }
+                />
+            </div>
 
 
 

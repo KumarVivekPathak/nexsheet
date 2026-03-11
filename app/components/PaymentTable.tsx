@@ -9,6 +9,9 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { FilterState, PaymentTableProps } from "@/types/types";
+import { useEffect } from "react";
+
 
 // Sample data based on your schema
 const SAMPLE_DATA = [
@@ -208,7 +211,31 @@ function MethodBadge({ method }: { method: string | null }) {
     );
 }
 
-const PaymentTable: React.FC = () => {
+const PaymentTable: React.FC<PaymentTableProps> = ({ filters }) => {
+
+    const filteredData = SAMPLE_DATA.filter((row) => {
+        if (filters?.rm_name && row.assigned_rm !== filters.rm_name) return false;
+        if (filters?.manager && row.manager !== filters.manager) return false;
+        if (filters?.course_type && row.course_type !== filters.course_type) return false;
+
+        if (filters?.search) {
+            const q = filters.search.toLowerCase();
+            const field = {
+                name: row.name,
+                email: row.email,
+                phone: row.phone,
+                order_id: row.order_id,
+            }[filters.searchType];
+            if (!field?.toLowerCase().includes(q)) return false;
+        }
+
+        if (filters?.date_from && new Date(row.created_at) < filters.date_from) return false;
+        if (filters?.date_to && new Date(row.created_at) > filters.date_to) return false;
+
+        return true;
+    });
+
+
     const formatDate = (dateStr: string) => {
         const d = new Date(dateStr);
         return d.toLocaleDateString("en-IN", {
@@ -248,7 +275,7 @@ const PaymentTable: React.FC = () => {
                         Payment Records
                     </h2>
                     <p className="text-[0.75rem] mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>
-                        {SAMPLE_DATA.length} entries found
+                        {filteredData.length} entries found
                     </p>
                 </div>
                 {/* Gold accent bar */}
@@ -293,7 +320,7 @@ const PaymentTable: React.FC = () => {
 
                     {/* Body */}
                     <tbody>
-                        {SAMPLE_DATA.map((row, index) => (
+                        {filteredData.map((row, index) => (
                             <tr
                                 key={row.id}
                                 className="transition-all duration-150 cursor-pointer group"
@@ -414,7 +441,7 @@ const PaymentTable: React.FC = () => {
                 style={{ borderTop: "1px solid rgba(212, 175, 55, 0.15)" }}
             >
                 <p className="text-[0.75rem]" style={{ color: "rgba(255,255,255,0.3)" }}>
-                    Showing 1 – {SAMPLE_DATA.length} of {SAMPLE_DATA.length} records
+                    Showing 1 – {filteredData.length} of {SAMPLE_DATA.length} records
                 </p>
                 <p className="text-[0.72rem]" style={{ color: "rgba(212, 175, 55, 0.4)" }}>
                     NexSheet • Internal Use Only

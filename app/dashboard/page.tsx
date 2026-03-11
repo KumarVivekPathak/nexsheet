@@ -3,8 +3,9 @@ import { FC, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/app/components/NavBar";
-import FilterBar, { FilterState } from "@/app/components/FilterBar";
+import FilterBar from "@/app/components/FilterBar";
 import PaymentTable from "../components/PaymentTable";
+import { FilterState } from "@/types/types";
 
 const DashboardPage: FC = () => {
   const { data: session, status } = useSession();
@@ -25,7 +26,7 @@ const DashboardPage: FC = () => {
       <FilterBar onFilterChange={(f) => setFilters(f)} />
       <main className="p-8">
         {/* Table will go here */}
-        <PaymentTable />
+        <PaymentTable filters={filters} />
         <pre className="text-xs">{JSON.stringify(filters, null, 2)}</pre>
       </main>
     </div>
