@@ -1,148 +1,6 @@
 "use client";
+import { PaymentTableProps } from "@/types/types";
 
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { FilterState, PaymentTableProps } from "@/types/types";
-import { useEffect } from "react";
-
-
-// Sample data based on your schema
-const SAMPLE_DATA = [
-    {
-        id: 1,
-        order_id: "ORD-2024-001",
-        created_at: "2024-01-15T10:30:00",
-        customer_id: "CUST001",
-        name: "Arjun Mehta",
-        email: "arjun.mehta@gmail.com",
-        course_type: "Online",
-        course_name: "Full Stack Development",
-        amount: 24999.0,
-        contact: "+91 9876543210",
-        phone: "+91 9876543210",
-        offer: "EARLY20",
-        assignee_email: "rahul.sharma@company.com",
-        assigned_rm: "Rahul Sharma",
-        manager: "Rajesh Verma",
-        city: "Mumbai",
-        pain_area: "Career Switch",
-        salary: "4-6 LPA",
-        status: "captured",
-        currency: "INR",
-        method: "UPI",
-        refund_status: null,
-        source_channel: "Web",
-    },
-    {
-        id: 2,
-        order_id: "ORD-2024-002",
-        created_at: "2024-01-16T14:15:00",
-        customer_id: "CUST002",
-        name: "Priya Sharma",
-        email: "priya.sharma@gmail.com",
-        course_type: "Hybrid",
-        course_name: "Data Science Bootcamp",
-        amount: 34999.0,
-        contact: "+91 9876543211",
-        phone: "+91 9876543211",
-        offer: null,
-        assignee_email: "priya.singh@company.com",
-        assigned_rm: "Priya Singh",
-        manager: "Sunita Mehta",
-        city: "Bangalore",
-        pain_area: "Skill Upgrade",
-        salary: "8-12 LPA",
-        status: "captured",
-        currency: "INR",
-        method: "Card",
-        refund_status: null,
-        source_channel: "App",
-    },
-    {
-        id: 3,
-        order_id: "ORD-2024-003",
-        created_at: "2024-01-17T09:00:00",
-        customer_id: "CUST003",
-        name: "Rohit Kumar",
-        email: "rohit.kumar@gmail.com",
-        course_type: "Self-Paced",
-        course_name: "Python for Beginners",
-        amount: 9999.0,
-        contact: "+91 9876543212",
-        phone: "+91 9876543212",
-        offer: "FLAT10",
-        assignee_email: "amit.kumar@company.com",
-        assigned_rm: "Amit Kumar",
-        manager: "Arun Joshi",
-        city: "Delhi",
-        pain_area: "Job Placement",
-        salary: "2-4 LPA",
-        status: "failed",
-        currency: "INR",
-        method: "NetBanking",
-        refund_status: null,
-        source_channel: "Web",
-    },
-    {
-        id: 4,
-        order_id: "ORD-2024-004",
-        created_at: "2024-01-18T16:45:00",
-        customer_id: "CUST004",
-        name: "Sneha Patel",
-        email: "sneha.patel@gmail.com",
-        course_type: "Online",
-        course_name: "UI/UX Design Masterclass",
-        amount: 19999.0,
-        contact: "+91 9876543213",
-        phone: "+91 9876543213",
-        offer: "DESIGN15",
-        assignee_email: "neha.gupta@company.com",
-        assigned_rm: "Neha Gupta",
-        manager: "Rajesh Verma",
-        city: "Pune",
-        pain_area: "Freelancing",
-        salary: "6-8 LPA",
-        status: "refunded",
-        currency: "INR",
-        method: "UPI",
-        refund_status: "full",
-        source_channel: "Referral",
-    },
-    {
-        id: 5,
-        order_id: "ORD-2024-005",
-        created_at: "2024-01-19T11:20:00",
-        customer_id: "CUST005",
-        name: "Vikram Singh",
-        email: "vikram.singh@gmail.com",
-        course_type: "Offline",
-        course_name: "Digital Marketing Pro",
-        amount: 14999.0,
-        contact: "+91 9876543214",
-        phone: "+91 9876543214",
-        offer: null,
-        assignee_email: "vikram.patel@company.com",
-        assigned_rm: "Vikram Patel",
-        manager: "Sunita Mehta",
-        city: "Hyderabad",
-        pain_area: "Business Growth",
-        salary: "10+ LPA",
-        status: "pending",
-        currency: "INR",
-        method: "Wallet",
-        refund_status: null,
-        source_channel: "Web",
-    },
-];
-
-// Status badge styling
 function StatusBadge({ status }: { status: string | null }) {
     if (!status) return <span style={{ color: "rgba(255,255,255,0.3)" }}>—</span>;
 
@@ -194,7 +52,6 @@ function StatusBadge({ status }: { status: string | null }) {
     );
 }
 
-// Method badge
 function MethodBadge({ method }: { method: string | null }) {
     if (!method) return <span style={{ color: "rgba(255,255,255,0.3)" }}>—</span>;
     return (
@@ -211,31 +68,8 @@ function MethodBadge({ method }: { method: string | null }) {
     );
 }
 
-const PaymentTable: React.FC<PaymentTableProps> = ({ filters }) => {
-
-    const filteredData = SAMPLE_DATA.filter((row) => {
-        if (filters?.rm_name && row.assigned_rm !== filters.rm_name) return false;
-        if (filters?.manager && row.manager !== filters.manager) return false;
-        if (filters?.course_type && row.course_type !== filters.course_type) return false;
-
-        if (filters?.search) {
-            const q = filters.search.toLowerCase();
-            const field = {
-                name: row.name,
-                email: row.email,
-                phone: row.phone,
-                order_id: row.order_id,
-            }[filters.searchType];
-            if (!field?.toLowerCase().includes(q)) return false;
-        }
-
-        if (filters?.date_from && new Date(row.created_at) < filters.date_from) return false;
-        if (filters?.date_to && new Date(row.created_at) > filters.date_to) return false;
-
-        return true;
-    });
-
-
+const PaymentTable: React.FC<PaymentTableProps> = ({ data, loading }) => {
+    const filteredData = data;
     const formatDate = (dateStr: string) => {
         const d = new Date(dateStr);
         return d.toLocaleDateString("en-IN", {
@@ -252,6 +86,44 @@ const PaymentTable: React.FC<PaymentTableProps> = ({ filters }) => {
             maximumFractionDigits: 0,
         }).format(amount);
     };
+
+    if (loading) {
+        return (
+            <div
+                className="mx-6 my-5 rounded-2xl flex items-center justify-center h-[300px]"
+                style={{
+                    border: "1px solid rgba(212, 175, 55, 0.2)",
+                    background: "rgba(10, 14, 26, 0.85)",
+                }}
+            >
+                <div className="text-center">
+                    <div
+                        className="w-8 h-8 rounded-full border-2 border-t-transparent animate-spin mx-auto mb-3"
+                        style={{ borderColor: "rgba(212, 175, 55, 0.6)", borderTopColor: "transparent" }}
+                    />
+                    <p className="text-[0.8rem]" style={{ color: "rgba(212,175,55,0.5)" }}>
+                        Loading records...
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
+    if (!data || data.length === 0) {
+        return (
+            <div
+                className="mx-6 my-5 rounded-2xl flex items-center justify-center h-[300px]"
+                style={{
+                    border: "1px solid rgba(212, 175, 55, 0.2)",
+                    background: "rgba(10, 14, 26, 0.85)",
+                }}
+            >
+                <p className="text-[0.85rem]" style={{ color: "rgba(255,255,255,0.3)" }}>
+                    No records found for the selected filters.
+                </p>
+            </div>
+        );
+    }
 
     return (
         <div
@@ -299,8 +171,10 @@ const PaymentTable: React.FC<PaymentTableProps> = ({ filters }) => {
                                 "Date",
                                 "Name",
                                 "Email",
+                                "Contact",
                                 "Course",
                                 "Amount",
+                                "Offer",
                                 "RM",
                                 "Manager",
                                 "City",
@@ -372,6 +246,13 @@ const PaymentTable: React.FC<PaymentTableProps> = ({ filters }) => {
                                     {row.email}
                                 </td>
 
+                                <td
+                                    className="px-4 py-3 text-[0.78rem] whitespace-nowrap"
+                                    style={{ color: "rgba(255,255,255,0.5)" }}
+                                >
+                                    {row.contact}
+                                </td>
+
                                 {/* Course */}
                                 <td className="px-4 py-3 whitespace-nowrap">
                                     <div
@@ -394,6 +275,13 @@ const PaymentTable: React.FC<PaymentTableProps> = ({ filters }) => {
                                     style={{ color: "#d4af37" }}
                                 >
                                     {formatAmount(row.amount)}
+                                </td>
+
+                                <td
+                                    className="px-4 py-3 text-[0.78rem] whitespace-nowrap"
+                                    style={{ color: "rgba(255,255,255,0.5)" }}
+                                >
+                                    {row.offer}
                                 </td>
 
                                 {/* RM */}
@@ -441,7 +329,7 @@ const PaymentTable: React.FC<PaymentTableProps> = ({ filters }) => {
                 style={{ borderTop: "1px solid rgba(212, 175, 55, 0.15)" }}
             >
                 <p className="text-[0.75rem]" style={{ color: "rgba(255,255,255,0.3)" }}>
-                    Showing 1 – {filteredData.length} of {SAMPLE_DATA.length} records
+                    Showing 1 – {filteredData.length} of {filteredData.length} records
                 </p>
                 <p className="text-[0.72rem]" style={{ color: "rgba(212, 175, 55, 0.4)" }}>
                     NexSheet • Internal Use Only

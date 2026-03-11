@@ -2,23 +2,16 @@
 import { useState } from "react";
 import { Search, X } from "lucide-react";
 import { DatePickerWithRange } from "./DateRangePicker";
-import { FilterState, FilterBarProps } from "@/types/types";
+import { FilterState, FilterBarProps, FilterOptionItems } from "@/types/types";
 
-
-const RM_NAMES = [
-    "Rahul Sharma",
-    "Priya Singh",
-    "Amit Kumar",
-    "Neha Gupta",
-    "Vikram Patel",
-];
-
-const MANAGER_NAMES = ["Rajesh Verma", "Sunita Mehta", "Arun Joshi"];
-const COURSE_TYPES = ["Online", "Offline", "Hybrid", "Self-Paced"];
-
-
-
-export default function FilterBar({ onFilterChange }: FilterBarProps) {
+export const FilterBar: React.FC<FilterBarProps> = ({
+    onFilterChange,
+    onApply,
+    onClear,
+    rmNames,
+    managerNames,
+    courseTypes,
+    metaLoading }) => {
     const [filters, setFilters] = useState<FilterState>({
         search: "",
         searchType: "name",
@@ -43,14 +36,14 @@ export default function FilterBar({ onFilterChange }: FilterBarProps) {
         };
         setFilters(reset);
         onFilterChange(reset);
+        onClear();
     };
 
     const hasActiveFilters =
         filters.search ||
         filters.rm_name ||
         filters.manager ||
-        filters.course_type;
-
+        filters.course_type
     return (
         <div
             className="sticky z-[90] px-6 py-3 flex flex-wrap gap-3 items-center"
@@ -61,9 +54,7 @@ export default function FilterBar({ onFilterChange }: FilterBarProps) {
                 backdropFilter: "blur(20px)",
             }}
         >
-            {/* Search Type + Input */}
             <div className="flex items-center flex-1 min-w-[280px] max-w-[420px]">
-                {/* Search Type Dropdown */}
                 <select
                     value={filters.searchType}
                     onChange={(e) => handleChange("searchType", e.target.value)}
@@ -79,11 +70,11 @@ export default function FilterBar({ onFilterChange }: FilterBarProps) {
                 >
                     <option value="name" style={{ background: "#0d1b2e" }}>Name</option>
                     <option value="email" style={{ background: "#0d1b2e" }}>Email</option>
-                    <option value="phone" style={{ background: "#0d1b2e" }}>Phone</option>
+                    <option value="contact" style={{ background: "#0d1b2e" }}>Contact</option>
                     <option value="order_id" style={{ background: "#0d1b2e" }}>Order ID</option>
+                    <option value="offer" style={{ background: "#0d1b2e" }}>Offer</option>
                 </select>
 
-                {/* Search Input */}
                 <div className="relative flex-1">
                     <Search
                         size={14}
@@ -115,25 +106,28 @@ export default function FilterBar({ onFilterChange }: FilterBarProps) {
 
             {/* RM Name */}
             <FilterSelect
-                placeholder="RM Name"
+                placeholder={metaLoading ? "Loading..." : "RM Name"}
                 value={filters.rm_name}
-                options={RM_NAMES}
+                options={rmNames}
+                labelKey="empName"
                 onChange={(val) => handleChange("rm_name", val)}
             />
 
             {/* Manager */}
             <FilterSelect
-                placeholder="Manager"
+                placeholder={metaLoading ? "Loading..." : "Manager"}
                 value={filters.manager}
-                options={MANAGER_NAMES}
+                options={managerNames}
+                labelKey="empName"
                 onChange={(val) => handleChange("manager", val)}
             />
 
             {/* Course Type */}
             <FilterSelect
-                placeholder="Course Type"
+                placeholder={metaLoading ? "Loading..." : "Course Type"}
                 value={filters.course_type}
-                options={COURSE_TYPES}
+                options={courseTypes}
+                labelKey="course_type"
                 onChange={(val) => handleChange("course_type", val)}
             />
 
@@ -150,6 +144,27 @@ export default function FilterBar({ onFilterChange }: FilterBarProps) {
             </div>
 
 
+            <button
+                onClick={onApply}
+                onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "linear-gradient(135deg, #c9a227, #e8d46a)";
+                    e.currentTarget.style.boxShadow = "0 4px 20px rgba(212, 175, 55, 0.5)";
+                }}
+                onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "linear-gradient(135deg, #d4af37, #f5e17a)";
+                    e.currentTarget.style.boxShadow = "0 4px 20px rgba(212, 175, 55, 0.35)";
+                }}
+                className="flex items-center gap-1.5 h-[38px] px-5 rounded-[10px] text-[0.82rem] font-semibold cursor-pointer transition-all"
+                style={{
+                    background: "linear-gradient(135deg, #d4af37, #f5e17a)",
+                    color: "#0a0e1a",
+                    border: "none",
+                    boxShadow: "0 4px 20px rgba(212, 175, 55, 0.35)",
+                    fontFamily: "var(--font-poppins), sans-serif",
+                }}
+            >
+                Apply
+            </button>
 
             {/* Clear Button */}
             {hasActiveFilters && (
@@ -180,19 +195,19 @@ export default function FilterBar({ onFilterChange }: FilterBarProps) {
 }
 
 // Reusable Filter Select
-function FilterSelect({
+const FilterSelect = ({
     placeholder,
     value,
     options,
     onChange,
-    capitalize = false,
+    labelKey,
 }: {
     placeholder: string;
     value: string;
-    options: string[];
+    options: FilterOptionItems[];
     onChange: (val: string) => void;
-    capitalize?: boolean;
-}) {
+    labelKey: "empName" | "course_type";
+}) => {
     return (
         <select
             value={value}
@@ -213,13 +228,14 @@ function FilterSelect({
             <option value="" style={{ background: "#0d1b2e", color: "#fff" }}>
                 {placeholder}
             </option>
+
             {options.map((opt) => (
                 <option
-                    key={opt}
-                    value={opt}
+                    key={opt.id}
+                    value={opt[labelKey] || ""}
                     style={{ background: "#0d1b2e", color: "#fff" }}
                 >
-                    {capitalize ? opt.charAt(0).toUpperCase() + opt.slice(1) : opt}
+                    {opt[labelKey]}
                 </option>
             ))}
         </select>

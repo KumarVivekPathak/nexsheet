@@ -7,13 +7,19 @@ datasource db {
   provider = "mysql"
 }
 
+enum Role {
+  USER
+  ADMIN
+  MANAGER
+}
+
 model User {
   id           Int      @id @default(autoincrement())
   employeeId   String   @unique @map("employee_id")
   empName      String?  @map("emp_name")
   empEmail     String   @unique @map("emp_email")
   password     String
-  role         String
+  role         Role
   managerName  String?  @map("manager_name")
   managerEmail String?  @map("manager_email")
   createdAt    DateTime @default(now()) @map("created_at")
