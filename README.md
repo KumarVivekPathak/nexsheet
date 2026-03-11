@@ -11,7 +11,9 @@ yarn dev
 ```
 
 ```bash
-main barach is the main updated branch 
+main barach is the main updated branch where we will merge prod complete code
+
+dev is currunt local or test branch
 ```
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
