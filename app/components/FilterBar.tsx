@@ -12,7 +12,7 @@ const RM_NAMES = [
 
 const MANAGER_NAMES = ["Rajesh Verma", "Sunita Mehta", "Arun Joshi"];
 const COURSE_TYPES = ["Online", "Offline", "Hybrid", "Self-Paced"];
-const STATUS_OPTIONS = ["captured", "failed", "refunded", "pending"];
+
 
 export type FilterState = {
     search: string;
@@ -20,7 +20,7 @@ export type FilterState = {
     rm_name: string;
     manager: string;
     course_type: string;
-    status: string;
+
 };
 
 type FilterBarProps = {
@@ -34,7 +34,6 @@ export default function FilterBar({ onFilterChange }: FilterBarProps) {
         rm_name: "",
         manager: "",
         course_type: "",
-        status: "",
     });
 
     const handleChange = (key: keyof FilterState, value: string) => {
@@ -50,7 +49,6 @@ export default function FilterBar({ onFilterChange }: FilterBarProps) {
             rm_name: "",
             manager: "",
             course_type: "",
-            status: "",
         };
         setFilters(reset);
         onFilterChange(reset);
@@ -60,8 +58,7 @@ export default function FilterBar({ onFilterChange }: FilterBarProps) {
         filters.search ||
         filters.rm_name ||
         filters.manager ||
-        filters.course_type ||
-        filters.status;
+        filters.course_type;
 
     return (
         <div
@@ -149,14 +146,7 @@ export default function FilterBar({ onFilterChange }: FilterBarProps) {
                 onChange={(val) => handleChange("course_type", val)}
             />
 
-            {/* Status */}
-            <FilterSelect
-                placeholder="Status"
-                value={filters.status}
-                options={STATUS_OPTIONS}
-                onChange={(val) => handleChange("status", val)}
-                capitalize
-            />
+
 
             {/* Clear Button */}
             {hasActiveFilters && (
