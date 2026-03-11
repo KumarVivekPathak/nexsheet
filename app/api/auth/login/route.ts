@@ -51,7 +51,7 @@ export async function POST(req: Request) {
             {
                 id: user.id,
                 employeeId: user.employeeId,
-                email: user.empEmail,
+                empEmail: user.empEmail,
                 empName: user.empName,
                 role: user.role,
                 managerName: user.managerName,

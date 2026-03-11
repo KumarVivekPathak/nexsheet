@@ -23,13 +23,13 @@ export const authOptions: NextAuthOptions = {
                     throw new Error("Email must be from @thebatraanumerology.com domain");
                 }
                 const user = await prisma.user.findUnique({
-                    where: { email: credentials.email },
+                    where: { empEmail: credentials.email },
                 });
                 if (!user) throw new Error("User not found");
                 if (user.password !== credentials.password) throw new Error("Invalid password");
                 return {
                     id: String(user.id),
-                    email: user.email,
+                    email: user.empEmail,
                     role: user.role,
                     employeeId: user.employeeId,
                     managerName: user.managerName,
@@ -41,7 +41,7 @@ export const authOptions: NextAuthOptions = {
         async signIn({ user, account }) {
             if (account?.provider === "google") {
                 const dbUser = await prisma.user.findUnique({
-                    where: { email: user.email! },
+                    where: { empEmail: user.email! },
                 });
                 if (!dbUser) throw new Error("Access denied. Your email is not registered.");
                 return true;
@@ -52,7 +52,7 @@ export const authOptions: NextAuthOptions = {
             if (user) {
                 if (account?.provider === "google") {
                     const dbUser = await prisma.user.findUnique({
-                        where: { email: token.email! },
+                        where: { empEmail: token.email! },
                     });
                     token.role = dbUser?.role;
                     token.employeeId = dbUser?.employeeId;

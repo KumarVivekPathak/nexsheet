@@ -26,6 +26,7 @@ export async function GET(
                 employeeId: true,
                 empName: true,
                 empEmail: true,
+                password: true,
                 role: true,
                 managerName: true,
                 managerEmail: true,
