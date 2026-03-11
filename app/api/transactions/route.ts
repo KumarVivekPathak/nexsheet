@@ -2,7 +2,7 @@ import { Prisma } from "@/app/generated/prisma/client";
 import { prisma } from "@/prisma/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-type SearchField = "name" | "email" | "phone" | "order_id";
+type SearchField = "name" | "email" | "contact" | "order_id";
 
 export const GET = async (req: NextRequest) => {
 
@@ -17,10 +17,10 @@ export const GET = async (req: NextRequest) => {
 
     const where: Prisma.all_txnsWhereInput = {};
 
-    const searchMap: Record<SearchField, "name" | "email" | "phone" | "order_id"> = {
+    const searchMap: Record<SearchField, "name" | "email" | "contact" | "order_id"> = {
         name: "name",
         email: "email",
-        phone: "phone",
+        contact: "contact",
         order_id: "order_id"
     };
 
@@ -39,7 +39,7 @@ export const GET = async (req: NextRequest) => {
         orderBy: {
             created_at: "desc"
         },
-        take: 100
+        take: 10
     });
 
     return NextResponse.json(data);
