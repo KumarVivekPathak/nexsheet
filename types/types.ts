@@ -29,3 +29,14 @@ export type FilterOptionItems = {
     empName?: string;
     course_type?: string;
 };
+
+export type users = {
+    id: number;
+    employeeId: string;
+    empName: string;
+    empEmail: string;
+    role: string;
+    managerName: string | null;
+    managerEmail: string | null;
+    createdAt: Date;
+}
