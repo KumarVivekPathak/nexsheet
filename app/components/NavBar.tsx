@@ -1,10 +1,19 @@
 "use client";
 import { FC, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const Navbar: FC = () => {
     const { data: session } = useSession();
     const [profileOpen, setProfileOpen] = useState(false);
+    const pathname = usePathname();
+
+    const navLinks = [
+        { name: "Dashboard", href: "/dashboard", roles: ["ADMIN", "USER", "MANAGER"] },
+        { name: "Inventory", href: "/inventory", roles: ["ADMIN", "USER", "MANAGER"] },
+        { name: "Users", href: "/users", roles: ["ADMIN"] },
+    ];
 
     return (
         <nav className="navbar">
@@ -15,7 +24,21 @@ const Navbar: FC = () => {
             </div>
 
             {/* Center - add links later */}
-            <div />
+            <div className="flex justify-end items-center gap-6">
+                {navLinks.filter((link) => link.roles.includes(session?.user?.role || ""))
+                    .map((link) => {
+                        const isActive = pathname === link.href;
+
+                        return (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                className={`text-sm font-medium transition-all duration-200 ${isActive ? "text-[#d4af37]" : "text-white hover:text-[#d4af37]"} `} >
+                                {link.name}
+                            </Link>
+                        );
+                    })}
+            </div>
 
             {/* Profile */}
             <div className="relative">
