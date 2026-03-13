@@ -5,16 +5,12 @@ import { NextRequest, NextResponse } from "next/server";
 type SearchField = "name" | "email" | "contact" | "order_id";
 
 export const GET = async (req: NextRequest) => {
-
     const { searchParams } = new URL(req.url);
-
     const search = searchParams.get("search") || "";
     const searchType = (searchParams.get("searchType") || "email") as SearchField;
-
     const assigned_rm = searchParams.get("assigned_rm") || "";
     const manager = searchParams.get("manager") || "";
     const course_type = searchParams.get("course_type") || "";
-
     const where: Prisma.all_txnsWhereInput = {};
 
     const searchMap: Record<SearchField, "name" | "email" | "contact" | "order_id"> = {
