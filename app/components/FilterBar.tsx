@@ -46,60 +46,38 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         filters.course_type
     return (
         <div
-            className="sticky z-[90] px-6 py-3 flex flex-wrap gap-3 items-center"
-            style={{
-                top: "64px",
-                background: "rgba(10, 14, 26, 0.95)",
-                borderBottom: "1px solid rgba(212, 175, 55, 0.2)",
-                backdropFilter: "blur(20px)",
-            }}
+            className="sticky top-16 z-[90] px-6 py-3 flex flex-wrap gap-3 items-center
+            bg-[rgba(10,14,26,0.95)] border-b border-gold-dim backdrop-blur-xl"
         >
             <div className="flex items-center flex-1 min-w-[280px] max-w-[420px]">
                 <select
                     value={filters.searchType}
                     onChange={(e) => handleChange("searchType", e.target.value)}
-                    className="h-[38px] w-[120px] rounded-l-[12px] rounded-r-none px-3 text-[0.8rem] outline-none cursor-pointer transition-all"
-                    style={{
-                        background: "rgba(212, 175, 55, 0.08)",
-                        border: "1px solid rgba(212, 175, 55, 0.2)",
-                        borderRight: "none",
-                        color: "rgba(212, 175, 55, 0.9)",
-                        fontFamily: "var(--font-poppins), sans-serif",
-                        colorScheme: "dark",
-                    }}
+                    className="h-9 w-[120px] rounded-l-xl rounded-r-none px-3 text-sm outline-none cursor-pointer transition
+                                bg-gold-faint border border-gold-dim border-r-0
+                                text-[rgba(212,175,55,0.9)] font-poppins"
                 >
-                    <option value="name" style={{ background: "#0d1b2e" }}>Name</option>
-                    <option value="email" style={{ background: "#0d1b2e" }}>Email</option>
-                    <option value="contact" style={{ background: "#0d1b2e" }}>Contact</option>
-                    <option value="order_id" style={{ background: "#0d1b2e" }}>Order ID</option>
-                    <option value="offer" style={{ background: "#0d1b2e" }}>Offer</option>
+                    <option value="name" className="bg-bg-secondary">Name</option>
+                    <option value="email" className="bg-bg-secondary">Email</option>
+                    <option value="contact" className="bg-bg-secondary">Contact</option>
+                    <option value="order_id" className="bg-bg-secondary">Order ID</option>
+                    <option value="offer" className="bg-bg-secondary">Offer</option>
                 </select>
 
                 <div className="relative flex-1">
                     <Search
                         size={14}
-                        className="absolute left-2.5 top-1/2 -translate-y-1/2"
-                        style={{ color: "rgba(212, 175, 55, 0.5)" }}
+                        className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gold-muted"
                     />
                     <input
                         placeholder={`Search by ${filters.searchType.replace("_", " ")}...`}
                         value={filters.search}
                         onChange={(e) => handleChange("search", e.target.value)}
-                        onFocus={(e) =>
-                            (e.target.style.borderColor = "rgba(212, 175, 55, 0.6)")
-                        }
-                        onBlur={(e) =>
-                            (e.target.style.borderColor = "rgba(212, 175, 55, 0.2)")
-                        }
-                        className="w-full h-[38px] pl-8 pr-3 text-[0.85rem] rounded-r-[12px] rounded-l-none outline-none transition-all"
-                        style={{
-                            background: "rgba(255, 255, 255, 0.05)",
-                            border: "1px solid rgba(212, 175, 55, 0.2)",
-                            color: "#ffffff",
-                            caretColor: "#d4af37",
-                            fontFamily: "var(--font-poppins), sans-serif",
-                            colorScheme: "dark",
-                        }}
+                        className="w-full h-9 pl-8 pr-3 text-sm rounded-r-xl rounded-l-none outline-none transition
+                                    bg-white-dim border border-gold-dim
+                                    focus:border-[#d4af37]
+                                    text-white caret-[#d4af37]
+                                    font-poppins"
                     />
                 </div>
             </div>
@@ -146,22 +124,11 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 
             <button
                 onClick={onApply}
-                onMouseEnter={(e) => {
-                    e.currentTarget.style.background = "linear-gradient(135deg, #c9a227, #e8d46a)";
-                    e.currentTarget.style.boxShadow = "0 4px 20px rgba(212, 175, 55, 0.5)";
-                }}
-                onMouseLeave={(e) => {
-                    e.currentTarget.style.background = "linear-gradient(135deg, #d4af37, #f5e17a)";
-                    e.currentTarget.style.boxShadow = "0 4px 20px rgba(212, 175, 55, 0.35)";
-                }}
-                className="flex items-center gap-1.5 h-[38px] px-5 rounded-[10px] text-[0.82rem] font-semibold cursor-pointer transition-all"
-                style={{
-                    background: "linear-gradient(135deg, #d4af37, #f5e17a)",
-                    color: "#0a0e1a",
-                    border: "none",
-                    boxShadow: "0 4px 20px rgba(212, 175, 55, 0.35)",
-                    fontFamily: "var(--font-poppins), sans-serif",
-                }}
+                className="flex items-center gap-1.5 h-9 px-5 rounded-lg text-sm font-semibold
+                bg-gradient-to-br from-yellow-400 to-yellow-300
+                hover:from-yellow-500 hover:to-yellow-400
+                text-gray-900 shadow-md hover:shadow-lg
+                transition font-poppins"
             >
                 Apply
             </button>
@@ -170,21 +137,10 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             {hasActiveFilters && (
                 <button
                     onClick={clearFilters}
-                    onMouseEnter={(e) => {
-                        e.currentTarget.style.background = "rgba(220, 38, 38, 0.15)";
-                        e.currentTarget.style.borderColor = "rgba(220, 38, 38, 0.4)";
-                    }}
-                    onMouseLeave={(e) => {
-                        e.currentTarget.style.background = "rgba(220, 38, 38, 0.08)";
-                        e.currentTarget.style.borderColor = "rgba(220, 38, 38, 0.2)";
-                    }}
-                    className="flex items-center gap-1.5 h-[38px] px-4 rounded-[10px] text-[0.8rem] font-medium cursor-pointer transition-all"
-                    style={{
-                        background: "rgba(220, 38, 38, 0.08)",
-                        border: "1px solid rgba(220, 38, 38, 0.2)",
-                        color: "#fca5a5",
-                        fontFamily: "var(--font-poppins), sans-serif",
-                    }}
+                    className="flex items-center gap-1.5 h-9 px-4 rounded-lg text-sm font-medium
+                    bg-red-500/10 hover:bg-red-500/20
+                    border border-red-500/30 hover:border-red-500/50
+                    text-red-300 transition font-poppins"
                 >
                     <X size={13} />
                     Clear

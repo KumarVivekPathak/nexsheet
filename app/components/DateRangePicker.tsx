@@ -30,20 +30,9 @@ export function DatePickerWithRange({ onChange }: { onChange?: (range: DateRange
 
                 <Button
                     variant="outline"
-                    className="
-                        h-[38px] 
-                        min-w-[210px] 
-                        justify-start 
-                        text-[0.82rem] 
-                        font-normal
-                        bg-[rgba(255,255,255,0.05)]
-                        border-[rgba(212,175,55,0.2)]
-                        text-white
-                        hover:bg-[rgba(255,255,255,0.08)]
-                        hover:border-[rgba(212,175,55,0.35)]
-                        "
+                    className="h-[38px] min-w-[210px] justify-start text-[0.82rem] font-normal bg-bg-secondary border-gold-dim text-white hover:bg-bg-secondary hover:border-gold-dim"
                 >
-                    <CalendarIcon className="mr-2 h-4 w-4 text-[rgba(212,175,55,0.6)]" />
+                    <CalendarIcon className="mr-2 h-4 w-4 text-gold-text" />
 
                     {date?.from ? (
                         date.to ? (
@@ -63,16 +52,8 @@ export function DatePickerWithRange({ onChange }: { onChange?: (range: DateRange
             </PopoverTrigger>
             <PopoverContent
                 align="start"
-                className="
-                w-auto  
-                bg-[rgba(10,14,26,0.98)]
-                border border-[rgba(212,175,55,0.2)]
-                backdrop-blur-xl
-                rounded-xl
-                shadow-xl
-            "
+                className="w-auto bg-bg-secondary border border-gold-dim backdrop-blur-xl rounded-xl shadow-xl"
             >
-
                 <Calendar
                     mode="range"
                     selected={date}
@@ -82,7 +63,6 @@ export function DatePickerWithRange({ onChange }: { onChange?: (range: DateRange
                     disabled={{ after: new Date() }}
                     className="text-white"
                 />
-
             </PopoverContent>
         </Popover>
     )

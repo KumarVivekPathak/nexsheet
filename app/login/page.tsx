@@ -99,7 +99,7 @@ const LoginPage: FC = () => {
                     {/* Divider */}
                     <div className="flex items-center gap-3 my-5">
                         <div className="flex-1 divider" />
-                        <span className="text-xs" style={{ color: "var(--white-muted)" }}>or</span>
+                        <span className="text-xs text-white-muted">or</span>
                         <div className="flex-1 divider" />
                     </div>
 
@@ -114,7 +114,7 @@ const LoginPage: FC = () => {
                         {googleLoading ? "Redirecting..." : "Continue with Google"}
                     </button>
 
-                    <p className="text-center text-xs mt-6" style={{ color: "var(--white-muted)" }}>
+                    <p className="text-center text-xs mt-6 text-white-muted">
                         Only @thebatraanumerology.com accounts are allowed
                     </p>
                 </div>
