@@ -9,19 +9,26 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 
-import { CalendarIcon } from "lucide-react"
+import { CalendarIcon, X } from "lucide-react"
 import { addDays, format } from "date-fns"
 import { DateRange } from "react-day-picker"
+import { useEffect, useState } from "react"
 
-export function DatePickerWithRange({ onChange }: { onChange?: (range: DateRange | undefined) => void }) {
-    const [date, setDate] = React.useState<DateRange | undefined>({
-        from: undefined,
-        to: new Date(),
-    })
+export function DatePickerWithRange({ onChange, value }: { onChange?: (range: DateRange | undefined) => void, value?: DateRange | undefined }) {
+    const [date, setDate] = useState<DateRange | undefined>(value)
+
+    useEffect(() => {
+        setDate(value)
+    }, [value])
 
     const handleSelect = (range: DateRange | undefined) => {
         setDate(range)
         onChange?.(range)
+    }
+
+    const handleClear = (e: React.MouseEvent) => {
+        e.stopPropagation()
+        handleSelect(undefined)
     }
 
     return (
@@ -35,17 +42,22 @@ export function DatePickerWithRange({ onChange }: { onChange?: (range: DateRange
                     <CalendarIcon className="mr-2 h-4 w-4 text-gold-text" />
 
                     {date?.from ? (
-                        date.to ? (
-                            <>
-                                {format(date.from, "dd MMM")} - {format(date.to, "dd MMM")}
-                            </>
-                        ) : (
-                            format(date.from, "dd MMM")
-                        )
-                    ) : (
-                        <span className="text-white/40">
-                            Date Range
+                        <span className="flex-1 text-left">
+                            {date.to
+                                ? `${format(date.from, "dd MMM")} - ${format(date.to, "dd MMM")}`
+                                : format(date.from, "dd MMM")}
                         </span>
+                    ) : (
+                        <span className="flex-1 text-left text-white/40">Date Range</span>
+                    )}
+
+                    {/* Inline clear — only shown when a date is selected */}
+                    {date?.from && (
+                        <X
+                            size={13}
+                            className="ml-2 text-white/40 hover:text-white transition"
+                            onClick={handleClear}
+                        />
                     )}
                 </Button>
 

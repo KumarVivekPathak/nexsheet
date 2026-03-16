@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Search, X } from "lucide-react";
 import { DatePickerWithRange } from "./DateRangePicker";
 import { FilterState, FilterBarProps, FilterOptionItems } from "@/types/types";
+import { DateRange } from "react-day-picker";
 
 export const FilterBar: React.FC<FilterBarProps> = ({
     onFilterChange,
@@ -19,11 +20,26 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         manager: "",
         course_type: "",
     });
+    const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
+
 
     const handleChange = (key: keyof FilterState, value: string) => {
         const updated = { ...filters, [key]: value };
         setFilters(updated);
-        onFilterChange(updated);
+        onFilterChange({
+            ...updated,
+            date_from: dateRange?.from,
+            date_to: dateRange?.to,
+        });
+    };
+
+    const handleDateChange = (range: DateRange | undefined) => {
+        setDateRange(range);
+        onFilterChange({
+            ...filters,
+            date_from: range?.from,
+            date_to: range?.to,
+        });
     };
 
     const clearFilters = () => {
@@ -35,6 +51,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             course_type: "",
         };
         setFilters(reset);
+        setDateRange(undefined);
         onFilterChange(reset);
         onClear();
     };
@@ -43,7 +60,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         filters.search ||
         filters.rm_name ||
         filters.manager ||
-        filters.course_type
+        filters.course_type ||
+        dateRange?.from;
     return (
         <div
             className="sticky top-16 z-[90] px-6 py-3 flex flex-wrap gap-3 items-center
@@ -111,13 +129,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 
             <div className="min-w-[210px]">
                 <DatePickerWithRange
-                    onChange={(range) =>
-                        onFilterChange({
-                            ...filters,
-                            date_from: range?.from,
-                            date_to: range?.to,
-                        })
-                    }
+                    value={dateRange}
+                    onChange={handleDateChange}
                 />
             </div>
 

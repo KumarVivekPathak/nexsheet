@@ -36,6 +36,10 @@ export const usePayments = (filters: FilterState) => {
         if (filters.rm_name) params.set("rm_name", filters.rm_name);
         if (filters.manager) params.set("manager", filters.manager);
         if (filters.course_type) params.set("course_type", filters.course_type);
+        if (filters.date_from)
+            params.set("date_from", new Date(filters.date_from).toISOString());
+        if (filters.date_to)
+            params.set("date_to", new Date(filters.date_to).toISOString())
 
         const controller = new AbortController();
 
@@ -79,7 +83,10 @@ export const useTransactions = (filters: FilterState) => {
         if (filters.rm_name) params.set("rm_name", filters.rm_name);
         if (filters.manager) params.set("manager", filters.manager);
         if (filters.course_type) params.set("course_type", filters.course_type);
-
+        if (filters.date_from)
+            params.set("date_from", new Date(filters.date_from).toISOString());
+        if (filters.date_to)
+            params.set("date_to", new Date(filters.date_to).toISOString());
         const controller = new AbortController();
 
         async function loadData() {
