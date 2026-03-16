@@ -23,8 +23,9 @@ export const useMetaOptions = () => {
     return { rmNames, managers, courseTypes, loading };
 }
 
-export const usePayments = (filters: FilterState) => {
+export const usePayments = (filters: FilterState, page: number, pageSize = 50) => {
     const [data, setData] = useState<any[]>([]);
+    const [total, setTotal] = useState(0);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -40,6 +41,8 @@ export const usePayments = (filters: FilterState) => {
             params.set("date_from", new Date(filters.date_from).toISOString());
         if (filters.date_to)
             params.set("date_to", new Date(filters.date_to).toISOString())
+        params.set("page", String(page));
+        params.set("pageSize", String(pageSize));
 
         const controller = new AbortController();
 
@@ -49,7 +52,8 @@ export const usePayments = (filters: FilterState) => {
 
                 const res = await fetch(`/api/transactions?${params.toString()}`, { signal: controller.signal });
                 const json = await res.json();
-                setData(json);
+                setData(json.data);
+                setTotal(json.total);
             } catch (err) {
                 if ((err as any).name !== "AbortError") {
                     console.error("Failed to load payments:", err);
@@ -62,10 +66,10 @@ export const usePayments = (filters: FilterState) => {
         loadData();
 
         return () => controller.abort();
-    }, [filters]);
+    }, [filters, page, pageSize]);
 
     console.log("datass ikjvnjkfndskjfndskjf: \n\n\n\n ", data)
-    return { data, loading };
+    return { data, loading, total };
 }
 
 

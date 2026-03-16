@@ -7,29 +7,23 @@ import PaymentTable from "../components/PaymentTable";
 import { FilterState } from "@/types/types";
 import { useMetaOptions, usePayments } from "@/hook/useTransactionFilter";
 import { FilterBar } from "../components/FilterBar";
+import { Pagination } from "../components/Pagination";
 
-const DashboardPage: FC = () => {
+
+const PAGE_SIZE = 50;
+const DashboardPage: React.FC = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const emptyFilters: FilterState = {
+    search: "", searchType: "name",
+    rm_name: "", manager: "", course_type: "",
+  };
 
-  const [filters, setFilters] = useState<FilterState>({
-    search: "",
-    searchType: "name",
-    rm_name: "",
-    manager: "",
-    course_type: "",
-  });
-
-  const [appliedFilters, setAppliedFilters] = useState<FilterState>({
-    search: "",
-    searchType: "name",
-    rm_name: "",
-    manager: "",
-    course_type: "",
-  });
-
+  const [filters, setFilters] = useState<FilterState>(emptyFilters);
+  const [appliedFilters, setAppliedFilters] = useState<FilterState>(emptyFilters);
+  const [page, setPage] = useState(1)
   const { rmNames, managers, courseTypes, loading: metaLoading } = useMetaOptions();
-  const { data, loading: dataLoading } = usePayments(appliedFilters);
+  const { data, total, loading: dataLoading } = usePayments(appliedFilters, page, PAGE_SIZE);
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login");
@@ -40,21 +34,18 @@ const DashboardPage: FC = () => {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg-primary)" }}>
+    <div className="min-h-screen bg-bg-primary">
       <Navbar />
       <FilterBar
         onFilterChange={setFilters}
-        onApply={() => setAppliedFilters(filters)}
+        onApply={() => {
+          setPage(1);
+          setAppliedFilters(filters)
+        }}
         onClear={() => {
-          const reset: FilterState = {
-            search: "",
-            searchType: "name",
-            rm_name: "",
-            manager: "",
-            course_type: "",
-          };
-          setFilters(reset);
-          setAppliedFilters(reset);
+          setPage(1);
+          setFilters(emptyFilters);
+          setAppliedFilters(emptyFilters);
         }}
         rmNames={rmNames}
         managerNames={managers}
@@ -62,9 +53,22 @@ const DashboardPage: FC = () => {
         metaLoading={metaLoading}
       />
       <main className="p-8">
-        <PaymentTable data={data} loading={dataLoading} filters={filters} />
-      </main>
-    </div>
+        < PaymentTable
+          data={data}
+          loading={dataLoading}
+          filters={filters}
+          page={page}
+          pageSize={PAGE_SIZE}
+          total={total}
+        />
+        <Pagination
+          page={page}
+          pageSize={PAGE_SIZE}
+          total={total}
+          onPageChange={setPage}
+        />
+      </main >
+    </div >
   );
 };
 

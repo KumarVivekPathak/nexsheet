@@ -68,8 +68,9 @@ function MethodBadge({ method }: { method: string | null }) {
     );
 }
 
-const PaymentTable: React.FC<PaymentTableProps> = ({ data, loading }) => {
+const PaymentTable: React.FC<PaymentTableProps> = ({ data, loading, page, pageSize, total }) => {
     const filteredData = data;
+    const offset = (page - 1) * pageSize;
     const formatDate = (dateStr: string) => {
         const d = new Date(dateStr);
         return d.toLocaleDateString("en-IN", {
@@ -130,9 +131,6 @@ const PaymentTable: React.FC<PaymentTableProps> = ({ data, loading }) => {
                     >
                         Payment Records
                     </h2>
-                    <p className="text-[0.75rem] mt-0.5 text-white/40">
-                        {filteredData.length} entries found
-                    </p>
                 </div>
                 {/* Gold accent bar */}
                 <div
@@ -183,7 +181,7 @@ const PaymentTable: React.FC<PaymentTableProps> = ({ data, loading }) => {
                             >
                                 {/* # */}
                                 <td className="px-4 py-3 text-xs font-mono text-white/30">
-                                    {index + 1}
+                                    {offset + index + 1}
                                 </td>
 
                                 {/* Order ID */}
@@ -261,9 +259,6 @@ const PaymentTable: React.FC<PaymentTableProps> = ({ data, loading }) => {
 
             {/* Footer */}
             <div className="flex items-center justify-between px-5 py-3 border-t border-white/10">
-                <p className="text-[0.75rem] text-white/30">
-                    Showing 1 – {filteredData.length} of {filteredData.length} records
-                </p>
                 <p className="text-[0.72rem] text-gold/40">
                     NexSheet • Internal Use Only
                 </p>

@@ -22,6 +22,9 @@ export type PaymentTableProps = {
     data: any[];
     loading: boolean;
     filters?: FilterState;
+    page: number;
+    pageSize: number;
+    total: number;
 };
 
 export type FilterOptionItems = {
@@ -39,4 +42,11 @@ export type users = {
     managerName: string | null;
     managerEmail: string | null;
     createdAt: Date;
+}
+
+export interface PaginationProps {
+    page: number;
+    pageSize: number;
+    total: number;
+    onPageChange: (page: number) => void;
 }

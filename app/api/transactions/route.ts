@@ -13,9 +13,12 @@ export const GET = async (req: NextRequest) => {
     const course_type = searchParams.get("course_type") || "";
     const date_from = searchParams.get("date_from") || "";
     const date_to = searchParams.get("date_to") || "";
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
+    const pageSize = Math.max(1, parseInt(searchParams.get("pageSize") || "50"));
+    const skip = (page - 1) * pageSize;
     const where: Prisma.all_txnsWhereInput = {};
 
-    const searchMap: Record<SearchField, "name" | "email" | "contact" | "order_id"> = {
+    const searchMap: Record<SearchField, SearchField> = {
         name: "name",
         email: "email",
         contact: "contact",
@@ -23,9 +26,7 @@ export const GET = async (req: NextRequest) => {
     };
 
     if (search) {
-        (where as any)[searchMap[searchType]] = {
-            contains: search
-        };
+        (where as any)[searchMap[searchType]] = { contains: search };
     }
 
     if (assigned_rm) where.assigned_rm = assigned_rm;
@@ -39,13 +40,16 @@ export const GET = async (req: NextRequest) => {
             ...(toDate && { lte: toDate }),
         };
     }
-    const data = await prisma.all_txns.findMany({
-        where,
-        orderBy: {
-            created_at: "desc"
-        },
-        take: 20
-    });
+    const [data, total] = await Promise.all([
+        prisma.all_txns.findMany({
+            where,
+            orderBy: { created_at: "desc" },
+            skip,
+            take: pageSize,
+        }),
+        prisma.all_txns.count({ where }),
+    ]);
 
-    return NextResponse.json(data);
+
+    return NextResponse.json({ data, total, page, pageSize });
 }
