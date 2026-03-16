@@ -18,7 +18,6 @@ export async function GET() {
                 createdAt: "desc",
             }
         });
-
         return NextResponse.json(
             { success: true, users },
             { status: 200 }

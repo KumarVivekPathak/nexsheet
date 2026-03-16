@@ -11,7 +11,7 @@ export const useUsers = () => {
             try {
                 const response = await fetch("/api/users");
                 const data = await response.json();
-                setUsers(data);
+                setUsers(data.users);
             } catch (err) {
                 setError(err instanceof Error ? err : new Error(String(err)));
             } finally {
