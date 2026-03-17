@@ -69,3 +69,76 @@ export function useCreateUser() {
 
     return { createUser, reset, ...state };
 }
+
+
+export function useDeleteUser() {
+    const [state, setState] = useState<CreateUserState>({
+        loading: false,
+        error: null,
+        success: false,
+    });
+
+    const deleteUser = async (userId: string) => {
+        setState({ loading: true, error: null, success: false });
+        try {
+            const res = await fetch(`/api/users/${userId}`, {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+            });
+            const json = await res.json();
+            if (!res.ok) {
+                setState({ loading: false, error: json.message ?? "Failed to delete user", success: false });
+                return { success: false, error: json.message };
+            }
+            setState({ loading: false, error: null, success: true });
+            return { success: true, data: json };
+        } catch (err: any) {
+            const msg = err?.message ?? "Something went wrong";
+            setState({ loading: false, error: msg, success: false });
+            return { success: false, error: msg };
+        }
+    };
+
+    const reset = () => setState({ loading: false, error: null, success: false });
+    return { deleteUser, reset, ...state };
+}
+
+
+export function useUpdateUser() {
+    const [state, setState] = useState<CreateUserState>({
+        loading: false,
+        error: null,
+        success: false,
+    });
+
+    const updateUser = async (userId: string, data: Partial<CreateUserPayload>) => {
+        setState({ loading: true, error: null, success: false });
+        try {
+            const res = await fetch(`/api/users/${userId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    emp_name: data.name,
+                    emp_email: data.email,
+                    role: data.role?.toUpperCase(),
+                    manager_name: data.managerName || null,
+                    manager_email: data.managerEmail || null,
+                }),
+            });
+            const json = await res.json();
+            if (!res.ok) {
+                setState({ loading: false, error: json.message ?? "Failed to update user", success: false });
+                return { success: false, error: json.message };
+            }
+            setState({ loading: false, error: null, success: true });
+            return { success: true, data: json };
+        } catch (err: any) {
+            const msg = err?.message ?? "Something went wrong";
+            setState({ loading: false, error: msg, success: false });
+            return { success: false, error: msg };
+        }
+    };
+
+    const reset = () => setState({ loading: false, error: null, success: false });
+    return { updateUser, reset, ...state };
+}

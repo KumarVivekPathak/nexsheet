@@ -1,11 +1,12 @@
 "use client";
-import { useUsers } from "@/hook/useUsers";
+import { useDeleteUser, useUpdateUser, useUsers } from "@/hook/useUsers";
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Search, User, Mail, Briefcase, Users, Pencil, Trash2 } from "lucide-react";
 import CreateUserModal from "@/app/components/CreateUserModal";
 import { Button } from "@/components/ui/button";
+import { CreateUserPayload } from "@/types/types";
 
 const ROLE_CONFIG: Record<string, { badge: string }> = {
     admin: { badge: "bg-bg-primary border border-gold text-[#d4af37]" },
@@ -24,27 +25,7 @@ function RoleBadge({ role }: { role: string }) {
     );
 }
 
-function UserCard({ user }: { user: any }) {
-    const handleEdit = (user: any) => {
-    };
-
-    const handleDelete = async (userId: string) => {
-        try {
-            const res = await fetch(`/api/users/${userId}`, {
-                method: "DELETE",
-                headers: { "Content-Type": "application/json" },
-            });
-            const json = await res.json();
-            if (!res.ok) {
-                console.error("Delete failed:", json.message);
-                return;
-            }
-            // call refetch / onSuccess from parent
-            console.log("Deleted:", json);
-        } catch (err) {
-            console.error("Delete error:", err);
-        }
-    };
+function UserCard({ user, onDelete, onEdit }: { user: any, onDelete: (userId: string) => void, onEdit: (userId: string, data: Partial<CreateUserPayload>) => void }) {
 
     return (
         <Card className="relative overflow-hidden transition-all duration-200 cursor-default bg-bg-primary border border-gold rounded-2xl">
@@ -85,16 +66,16 @@ function UserCard({ user }: { user: any }) {
                         </div>
                     )}
                 </div>
-                <section className="flex items-center gap-2 mt-4">
+                <section className="flex justify-end items-center gap-2 mt-4">
                     <Button
-                        onClick={() => handleEdit(user)}
+                        onClick={() => onEdit(user.id, user)}
                         className="flex items-center gap-1.5 h-[32px] px-3 text-[0.78rem] rounded-[8px] bg-gold/10 border border-gold/30 text-gold hover:bg-gold/20 hover:border-gold/50 transition-all"
                     >
                         <Pencil size={12} />
                         Edit
                     </Button>
                     <Button
-                        onClick={() => handleDelete(user.id)}
+                        onClick={() => onDelete(user.id)}
                         className="flex items-center gap-1.5 h-[32px] px-3 text-[0.78rem] rounded-[8px] bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 hover:border-red-500/40 transition-all"
                     >
                         <Trash2 size={12} />
@@ -109,6 +90,19 @@ function UserCard({ user }: { user: any }) {
 const UsersPage: React.FC = () => {
     const { users } = useUsers();
     const [search, setSearch] = useState("");
+    const { deleteUser } = useDeleteUser();
+    const { updateUser } = useUpdateUser();
+
+
+    const handleDelete = async (userId: string) => {
+        const result = await deleteUser(userId);
+        if (result.success) window.location.reload(); // re-fetch users list
+    };
+
+    const handleEdit = async (userId: string, data: Partial<CreateUserPayload>) => {
+        const result = await updateUser(userId, data);
+        if (result.success) window.location.reload();
+    };
 
     const filtered = users.filter((user) => {
         const q = search.toLowerCase();
@@ -151,7 +145,7 @@ const UsersPage: React.FC = () => {
             {filtered.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     {filtered.map((user) => (
-                        <UserCard key={user.id} user={user} />
+                        <UserCard key={user.id} user={user} onDelete={handleDelete} onEdit={handleEdit} />
                     ))}
                 </div>
             ) : (
