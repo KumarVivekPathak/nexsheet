@@ -3,14 +3,14 @@ import { FC, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/app/components/NavBar";
-import PaymentTable from "../components/PaymentTable";
+import PaymentTable from "../../components/PaymentTable";
 import { FilterState } from "@/types/types";
 import { useMetaOptions, usePayments } from "@/hook/useTransactionFilter";
-import { FilterBar } from "../components/FilterBar";
-import { Pagination } from "../components/Pagination";
+import { FilterBar } from "../../components/FilterBar";
+import { Pagination } from "../../components/Pagination";
 
 
-const PAGE_SIZE = 50;
+const PAGE_SIZE = 100;
 const DashboardPage: React.FC = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -35,7 +35,6 @@ const DashboardPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-bg-primary">
-      <Navbar />
       <FilterBar
         onFilterChange={setFilters}
         onApply={() => {

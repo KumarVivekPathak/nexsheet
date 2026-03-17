@@ -14,7 +14,7 @@ export const GET = async (req: NextRequest) => {
     const date_from = searchParams.get("date_from") || "";
     const date_to = searchParams.get("date_to") || "";
     const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
-    const pageSize = Math.max(1, parseInt(searchParams.get("pageSize") || "50"));
+    const pageSize = Math.max(1, parseInt(searchParams.get("pageSize") || "100"));
     const skip = (page - 1) * pageSize;
     const where: Prisma.all_txnsWhereInput = {};
 

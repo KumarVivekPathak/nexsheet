@@ -23,7 +23,7 @@ export const useMetaOptions = () => {
     return { rmNames, managers, courseTypes, loading };
 }
 
-export const usePayments = (filters: FilterState, page: number, pageSize = 50) => {
+export const usePayments = (filters: FilterState, page: number, pageSize = 100) => {
     const [data, setData] = useState<any[]>([]);
     const [total, setTotal] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -68,7 +68,6 @@ export const usePayments = (filters: FilterState, page: number, pageSize = 50) =
         return () => controller.abort();
     }, [filters, page, pageSize]);
 
-    console.log("datass ikjvnjkfndskjfndskjf: \n\n\n\n ", data)
     return { data, loading, total };
 }
 

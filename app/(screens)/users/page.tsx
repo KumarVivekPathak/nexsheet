@@ -17,7 +17,6 @@ const UsersPage: React.FC = () => {
                     <p>{user.role}</p>
                     <p>{user.managerName}</p>
                     <p>{user.managerEmail}</p>
-                    {/* <p>{user.createdAt.toDateString()}</p> */}
                 </div>
             ))}
         </div>
