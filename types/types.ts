@@ -50,3 +50,30 @@ export interface PaginationProps {
     total: number;
     onPageChange: (page: number) => void;
 }
+
+export type CreateUserPayload = {
+    employeeId: string;
+    name: string;
+    email: string;
+    password: string;
+    role: "USER" | "MANAGER" | "ADMIN";
+    managerName: string;
+    managerEmail: string;
+};
+
+export type CreateUserState = {
+    loading: boolean;
+    error: string | null;
+    success: boolean;
+};
+
+export type CreateUserForm = {
+    employeeId: string;
+    name: string;
+    email: string;
+    password: string;
+    role: "USER" | "MANAGER" | "ADMIN";
+    managerId: string;
+    managerName: string;
+    managerEmail: string;
+};

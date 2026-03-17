@@ -3,7 +3,9 @@ import { useUsers } from "@/hook/useUsers";
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Search, User, Mail, Briefcase, Users } from "lucide-react";
+import { Search, User, Mail, Briefcase, Users, Pencil, Trash2 } from "lucide-react";
+import CreateUserModal from "@/app/components/CreateUserModal";
+import { Button } from "@/components/ui/button";
 
 const ROLE_CONFIG: Record<string, { badge: string }> = {
     admin: { badge: "bg-bg-primary border border-gold text-[#d4af37]" },
@@ -12,7 +14,6 @@ const ROLE_CONFIG: Record<string, { badge: string }> = {
 };
 
 function RoleBadge({ role }: { role: string }) {
-    console.log(role);
     const cfg = ROLE_CONFIG[role?.toLowerCase()?.trim()] ?? {
         badge: "bg-white border border-white text-black",
     };
@@ -24,11 +25,30 @@ function RoleBadge({ role }: { role: string }) {
 }
 
 function UserCard({ user }: { user: any }) {
-    console.log("role value dkjfsdskjfgdskjghjdskg:", user.role)
+    const handleEdit = (user: any) => {
+    };
+
+    const handleDelete = async (userId: string) => {
+        try {
+            const res = await fetch(`/api/users/${userId}`, {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+            });
+            const json = await res.json();
+            if (!res.ok) {
+                console.error("Delete failed:", json.message);
+                return;
+            }
+            // call refetch / onSuccess from parent
+            console.log("Deleted:", json);
+        } catch (err) {
+            console.error("Delete error:", err);
+        }
+    };
+
     return (
         <Card className="relative overflow-hidden transition-all duration-200 cursor-default bg-bg-primary border border-gold rounded-2xl">
             <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-gold to-transparent" />
-
             <CardContent className="p-5">
                 <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
@@ -64,14 +84,23 @@ function UserCard({ user }: { user: any }) {
                             <span className="text-[0.78rem] text-white/40">{user.managerName}</span>
                         </div>
                     )}
-
-                    {user.managerEmail && (
-                        <div className="flex items-center gap-2.5">
-                            <Briefcase size={13} className="text-white/40 flex-shrink-0" />
-                            <span className="text-[0.78rem] truncate text-gold bg-gold/10">{user.managerEmail}</span>
-                        </div>
-                    )}
                 </div>
+                <section className="flex items-center gap-2 mt-4">
+                    <Button
+                        onClick={() => handleEdit(user)}
+                        className="flex items-center gap-1.5 h-[32px] px-3 text-[0.78rem] rounded-[8px] bg-gold/10 border border-gold/30 text-gold hover:bg-gold/20 hover:border-gold/50 transition-all"
+                    >
+                        <Pencil size={12} />
+                        Edit
+                    </Button>
+                    <Button
+                        onClick={() => handleDelete(user.id)}
+                        className="flex items-center gap-1.5 h-[32px] px-3 text-[0.78rem] rounded-[8px] bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 hover:border-red-500/40 transition-all"
+                    >
+                        <Trash2 size={12} />
+                        Delete
+                    </Button>
+                </section>
             </CardContent>
         </Card>
     );
@@ -103,15 +132,19 @@ const UsersPage: React.FC = () => {
                 </div>
 
                 {/* Search */}
-                <div className="relative min-w-[260px] max-w-[340px] w-full">
-                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-gold" />
-                    <Input
-                        placeholder="Search by name, email, role..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        className="pl-8 h-[38px] text-md rounded-[10px] bg-bg-primary border-gold text-white caret-gold placeholder:text-white focus:border-gold focus-visible:ring-0 font-poppins"
-                    />
-                </div>
+                <section className="flex items-center gap-2 ">
+                    <CreateUserModal onSuccess={() => window.location.reload()} />
+
+                    <div className="relative min-w-[260px] max-w-[340px] w-full">
+                        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-gold" />
+                        <Input
+                            placeholder="Search by name, email, role..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="pl-8 h-[38px] text-md rounded-[10px] bg-bg-primary border-gold text-white caret-gold placeholder:text-white focus:border-gold focus-visible:ring-0 font-poppins"
+                        />
+                    </div>
+                </section>
             </div>
 
             {/* Cards Grid */}
